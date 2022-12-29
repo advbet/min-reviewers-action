@@ -1,0 +1,12 @@
+name: 'Min reviewers'
+description: 'FIXME'
+
+inputs:
+  GITHUB_TOKEN:
+    description: "Github token"
+    default: ${{ github.token }}
+    required: false
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
