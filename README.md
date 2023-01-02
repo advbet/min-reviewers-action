@@ -9,8 +9,8 @@ approve use `min-all-reviewers`.
 name: Min reviewers
 
 on:
-  pull_request_review:
-    types: [submitted, dismissed]
+  pull_request:
+    types: [opened, edited]
 
 jobs:
   approved-by:
