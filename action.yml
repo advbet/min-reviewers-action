@@ -1,0 +1,12 @@
+name: 'Min reviewers'
+description: 'Sets minimum number of reviewers through PR labels'
+
+inputs:
+  GITHUB_TOKEN:
+    description: "Github token"
+    default: ${{ github.token }}
+    required: false
+
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

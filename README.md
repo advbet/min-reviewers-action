@@ -1,6 +1,7 @@
 # Min reviewers GitHub Action
 
-FIXME
+Sets minimum number of reviewers through PR labels. Label pattern `min-{number}-reviewers`. For all reviewers to
+approve use `min-all-reviewers`.
 
 ## Usage
 
@@ -8,8 +9,8 @@ FIXME
 name: Min reviewers
 
 on:
-  pull_request_review:
-    types: [submitted, dismissed]
+  pull_request:
+    types: [labeled, unlabeled]
 
 jobs:
   approved-by:
