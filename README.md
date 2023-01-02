@@ -10,7 +10,7 @@ name: Min reviewers
 
 on:
   pull_request:
-    types: [opened, edited]
+    types: [labeled, unlabeled]
 
 jobs:
   approved-by:

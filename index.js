@@ -56,7 +56,7 @@ const run = async () => {
   const labels = pull.labels || []
   const pattern = /min-(?<number>\d|all)-reviewers/
 
-  for (const label in labels) {
+  for (const label of labels) {
     const match = label.name.match(pattern)
     if (match !== null && 'number' in match.group) {
       const minReviewers = match.group.number
