@@ -75,21 +75,22 @@ const run = async () => {
     return
   }
 
-  let state = 'failure'
-  let description = 'Minimal requirement not met'
+  // let state = 'failure'
+  // let description = 'Minimal requirement not met'
 
-  if (await requirementPassed(octokit, context, pull, minReviewers)) {
-    state = 'success'
-    description = 'Minimal requirement met'
+  if (!await requirementPassed(octokit, context, pull, minReviewers)) {
+    core.setFailed('Minimal requirement not met')
+    // state = 'success'
+    // description = 'Minimal requirement met'
   }
 
-  await octokit.rest.repos.createCommitStatus({
-    ...context.repo,
-    sha: context.payload.pull_request?.head.sha,
-    context: 'advbet/min-reviewers-action',
-    state,
-    description
-  })
+  // await octokit.rest.repos.createCommitStatus({
+  //   ...context.repo,
+  //   sha: context.payload.pull_request?.head.sha,
+  //   context: 'advbet/min-reviewers-action',
+  //   state,
+  //   description
+  // })
 }
 
 run()
