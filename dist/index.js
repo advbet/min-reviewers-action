@@ -9752,6 +9752,8 @@ async function requirementPassed (octokit, context, pull, minReviewers) {
       // https://dev.to/kannndev/filter-an-array-for-unique-values-in-javascript-1ion
       return array.findIndex(x => review.user?.id === x.user?.id) === index
     })
+  const approvedReviews = latestReviews.filter(review => review.state.toLowerCase() === 'approved')
+  _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Approved reviews: ${approvedReviews.length}`)
 
   if (minReviewers === 'all') {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.debug(`Pull request reviewers: ${pull.requested_reviewers}`)
@@ -9767,7 +9769,6 @@ async function requirementPassed (octokit, context, pull, minReviewers) {
     }
   }
 
-  const approvedReviews = latestReviews.filter(review => review.state.toLowerCase() === 'approved')
   return approvedReviews.length >= minReviewers
 }
 
