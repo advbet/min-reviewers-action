@@ -1,6 +1,6 @@
 # Min reviewers GitHub Action
 
-Sets minimum number of reviewers through PR labels. Label pattern `min-{number}-reviewers`. To require all reviewers to
+Sets minimum number of reviewers through PR labels. Label pattern `min-{number}-reviewers`. For all reviewers to
 approve use `min-all-reviewers`.
 
 ## Usage
