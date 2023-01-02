@@ -39,6 +39,19 @@ async function requirementPassed (octokit, context, pull, minReviewers) {
   return approvedReviews.length >= minReviewers
 }
 
+async function getMatchedLabel (labels) {
+  const pattern = /min-(?<number>\d|all)-reviewers/
+
+  for (const label of labels) {
+    const match = label.name.match(pattern)
+    if (match !== null && 'number' in match.groups) {
+      return label
+    }
+  }
+
+  return null
+}
+
 const run = async () => {
   const token = core.getInput('GITHUB_TOKEN', { required: true })
 
@@ -53,20 +66,30 @@ const run = async () => {
     ...context.repo,
     pull_number: context.payload.pull_request.number
   })
-  const labels = pull.labels || []
-  const pattern = /min-(?<number>\d|all)-reviewers/
 
-  for (const label of labels) {
-    const match = label.name.match(pattern)
-    if (match !== null && 'number' in match.groups) {
-      const minReviewers = match.groups.number
-      core.info(`Min reviewers: ${minReviewers}`)
-      return requirementPassed(octokit, context, pull, minReviewers)
-    }
+  const matchedLabel = await getMatchedLabel(pull.labels || [])
+  if (matchedLabel === null) {
+    core.info('Label matching pattern not found')
+    return
   }
 
-  core.info('Label matching pattern not found')
-  return true
+  const minReviewers = matchedLabel.groups.number
+  let state = false
+  let description = 'Minimal requirement not met'
+  core.info(`Min reviewers: ${minReviewers}`)
+
+  if (await requirementPassed(octokit, context, pull, minReviewers)) {
+    state = true
+    description = 'Minimal requirement met'
+  }
+
+  await octokit.rest.repos.createCommitStatus({
+    ...context.repo,
+    sha: context.payload.pull_request?.head.sha,
+    context: 'advbet/min-reviewers-action',
+    state,
+    description
+  })
 }
 
 run()
