@@ -2,7 +2,7 @@
   "name": "min-reviewers-action",
   "main": "index.js",
   "scripts": {
-    "build": "standard --fix index.js && ncc build index.js -o dist --source-map --license licenses.txt"
+    "build": "ts-standard --fix index.ts && ncc build build/index.js -o dist --source-map --license licenses.txt"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
@@ -10,6 +10,7 @@
   },
   "devDependencies": {
     "@vercel/ncc": "^0.36.0",
-    "standard": "^17.0.0"
+    "ts-standard": "^12.0.2",
+    "typescript": "^4.9.4"
   }
 }
