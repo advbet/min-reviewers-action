@@ -1,6 +1,43 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 
+async function requirementPassed (octokit, context, pull, minReviewers) {
+  const { data: reviews } = await octokit.rest.pulls.listReviews({
+    ...context.repo,
+    pull_number: context.payload.pull_request.number,
+    per_page: 100
+  })
+
+  if (reviews.length === 0) {
+    core.info('No reviews found')
+    return false
+  }
+
+  const latestReviews = reviews
+    .reverse()
+    .filter(review => review.state.toLowerCase() !== 'commented')
+    .filter((review, index, array) => {
+      // https://dev.to/kannndev/filter-an-array-for-unique-values-in-javascript-1ion
+      return array.findIndex(x => review.user?.id === x.user?.id) === index
+    })
+
+  if (minReviewers === 'all') {
+    core.debug(`Pull request reviewers: ${pull.requested_reviewers}`)
+
+    // some reviewers have not reviewed
+    if (pull.requested_reviewers > 0) {
+      return false
+    }
+
+    // some reviewers do not approve
+    if (!latestReviews.every(review => review.state.toLowerCase() === 'approved')) {
+      return false
+    }
+  }
+
+  return latestReviews.length >= minReviewers
+}
+
 const run = async () => {
   const token = core.getInput('GITHUB_TOKEN', { required: true })
 
@@ -15,65 +52,20 @@ const run = async () => {
     ...context.repo,
     pull_number: context.payload.pull_request.number
   })
+  const labels = pull.labels || []
+  const pattern = /min-(?<number>\d|all)-reviewers/
 
-  const { data: reviews } = await octokit.rest.pulls.listReviews({
-    ...context.repo,
-    pull_number: context.payload.pull_request.number,
-    per_page: 100
-  })
-
-  const latestReviews = reviews
-    .reverse()
-    .filter(review => review.state.toLowerCase() !== 'commented')
-    .filter((review, index, array) => {
-      // https://dev.to/kannndev/filter-an-array-for-unique-values-in-javascript-1ion
-      return array.findIndex(x => review.user?.id === x.user?.id) === index
-    })
-
-  let updatePR = false
-  let approveByBody = ''
-  let pullBody = pull.body || ''
-  const approveByIndex = pullBody.search(/Approved-by/)
-
-  for (const review of latestReviews) {
-    core.debug(`Latest ${review.user?.login} review '${review.state.toLowerCase()}'`)
-
-    if (review.state.toLowerCase() === 'approved') {
-      const login = review.user?.login
-      const { data: user } = await octokit.rest.users.getByUsername({ username: login })
-      core.debug(`${login} name is '${user?.name}'`)
-
-      if (user?.name?.length > 0) {
-        approveByBody += `\nApproved-by: ${login} (${user.name})`
-      } else {
-        approveByBody += `\nApproved-by: ${login}`
-      }
+  for (const label in labels) {
+    const match = label.name.match(pattern)
+    if (match !== null && 'number' in match.group) {
+      const minReviewers = match.group.number
+      core.info(`Min reviewers: ${minReviewers}`)
+      return requirementPassed(octokit, context, pull, minReviewers)
     }
   }
 
-  // body with "Approved-by" already set
-  if (approveByIndex > -1) {
-    pullBody = pullBody.replace(/\nApproved-by:.*/s, approveByBody)
-    updatePR = true
-  }
-
-  // body without "Approved-by"
-  if (approveByBody.length > 0 && approveByIndex === -1) {
-    pullBody += `\n${approveByBody}`
-    updatePR = true
-  }
-
-  core.debug(`updatePR: ${updatePR}`)
-  core.debug(`approveByIndex: ${approveByIndex}`)
-  core.debug(`approveByBody length: ${approveByBody.length}`)
-
-  if (updatePR) {
-    await octokit.rest.pulls.update({
-      ...context.repo,
-      pull_number: context.payload.pull_request.number,
-      body: pullBody
-    })
-  }
+  core.info('Label matching pattern not found')
+  return true
 }
 
 run()

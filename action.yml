@@ -1,5 +1,5 @@
 name: 'Min reviewers'
-description: 'FIXME'
+description: 'Sets minimum number of reviewers through PR labels'
 
 inputs:
   GITHUB_TOKEN:
