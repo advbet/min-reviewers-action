@@ -39,17 +39,17 @@ async function requirementPassed (octokit, context, pull, minReviewers) {
   return approvedReviews.length >= minReviewers
 }
 
-async function getMatchedLabel (labels) {
+async function getMinReviewers (labels) {
   const pattern = /min-(?<number>\d|all)-reviewers/
 
   for (const label of labels) {
     const match = label.name.match(pattern)
     if (match !== null && 'number' in match.groups) {
-      return label
+      return match.groups.number
     }
   }
 
-  return null
+  return 0
 }
 
 const run = async () => {
@@ -67,16 +67,15 @@ const run = async () => {
     pull_number: context.payload.pull_request.number
   })
 
-  const matchedLabel = await getMatchedLabel(pull.labels || [])
-  if (matchedLabel === null) {
+  const minReviewers = await getMinReviewers(pull.labels || [])
+  core.info(`Min reviewers: ${minReviewers}`)
+  if (minReviewers === 0) {
     core.info('Label matching pattern not found')
     return
   }
 
-  const minReviewers = matchedLabel.groups.number
   let state = false
   let description = 'Minimal requirement not met'
-  core.info(`Min reviewers: ${minReviewers}`)
 
   if (await requirementPassed(octokit, context, pull, minReviewers)) {
     state = true
