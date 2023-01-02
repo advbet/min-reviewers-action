@@ -9806,11 +9806,11 @@ const run = async () => {
     return
   }
 
-  let state = false
+  let state = 'failure'
   let description = 'Minimal requirement not met'
 
   if (await requirementPassed(octokit, context, pull, minReviewers)) {
-    state = true
+    state = 'success'
     description = 'Minimal requirement met'
   }
 
