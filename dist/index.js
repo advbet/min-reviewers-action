@@ -9807,22 +9807,9 @@ const run = async () => {
     return
   }
 
-  // let state = 'failure'
-  // let description = 'Minimal requirement not met'
-
   if (!await requirementPassed(octokit, context, pull, minReviewers)) {
     _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed('Minimal requirement not met')
-    // state = 'success'
-    // description = 'Minimal requirement met'
   }
-
-  await octokit.rest.repos.createCommitStatus({
-    ...context.repo,
-    sha: context.payload.pull_request?.head.sha,
-    context: 'advbet/min-reviewers-action',
-    state: 'success',
-    description: 'Dismiss status commit'
-  })
 }
 
 run()
