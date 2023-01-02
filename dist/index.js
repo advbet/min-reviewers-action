@@ -9747,7 +9747,7 @@ async function requirementPassed (octokit, context, pull, minReviewers) {
 
   const latestReviews = reviews
     .reverse()
-    .filter(review => review.state.toLowerCase() !== 'commented')
+    .filter(review => review.state.toLowerCase() === 'commented')
     .filter((review, index, array) => {
       // https://dev.to/kannndev/filter-an-array-for-unique-values-in-javascript-1ion
       return array.findIndex(x => review.user?.id === x.user?.id) === index
@@ -9767,7 +9767,8 @@ async function requirementPassed (octokit, context, pull, minReviewers) {
     }
   }
 
-  return latestReviews.length >= minReviewers
+  const approvedReviews = latestReviews.filter(review => review.state.toLowerCase() === 'approved')
+  return approvedReviews.length >= minReviewers
 }
 
 const run = async () => {
