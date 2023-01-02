@@ -58,8 +58,8 @@ const run = async () => {
 
   for (const label of labels) {
     const match = label.name.match(pattern)
-    if (match !== null && 'number' in match.group) {
-      const minReviewers = match.group.number
+    if (match !== null && 'number' in match.groups) {
+      const minReviewers = match.groups.number
       core.info(`Min reviewers: ${minReviewers}`)
       return requirementPassed(octokit, context, pull, minReviewers)
     }
