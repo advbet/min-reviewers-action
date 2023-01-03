@@ -7,14 +7,13 @@ export function getMinReviewers(labels: ILabel[]): string | number {
 
   for (const label of labels) {
     const m = label.name.match(pattern);
-    if (m !== null) {
-      const g = m.groups || {};
-      const n = g.number || "0";
-      if (n === "all") {
-        return n;
-      }
-      return parseInt(n, 10);
+    if (!m) {
+      continue;
     }
+
+    const { groups = {} } = m;
+    const { number = "0" } = groups;
+    return number === "all" ? number : parseInt(number, 10);
   }
 
   return 0;
