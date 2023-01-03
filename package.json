@@ -1,8 +1,14 @@
 {
   "name": "min-reviewers-action",
-  "main": "index.js",
+  "main": "build/index.js",
   "scripts": {
-    "build": "ts-standard --fix index.ts && tsc && ncc build build/index.js -o dist --source-map --license licenses.txt"
+    "build": "tsc",
+    "format": "prettier --write 'src/*.ts'",
+    "format-check": "prettier --check 'src/*.ts'",
+    "package": "ncc build --license licenses.txt",
+    "lint": "eslint src/**/*.ts",
+    "test": "jest",
+    "all": "npm run test && npm run lint && npm run format && npm run build && npm run package"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
@@ -10,9 +16,14 @@
   },
   "devDependencies": {
     "@octokit/rest": "^19.0.5",
+    "@types/jest": "^29.2.5",
     "@types/node": "^18.11.0",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
     "@vercel/ncc": "^0.36.0",
+    "eslint": "^8.31.0",
     "prettier": "^2.8.1",
+    "ts-jest": "^29.0.3",
     "typescript": "^4.9.4"
   }
 }
