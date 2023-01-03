@@ -2,15 +2,17 @@
   "name": "min-reviewers-action",
   "main": "index.js",
   "scripts": {
-    "build": "ts-standard --fix index.ts && ncc build build/index.js -o dist --source-map --license licenses.txt"
+    "build": "ts-standard --fix index.ts && tsc && ncc build build/index.js -o dist --source-map --license licenses.txt"
   },
   "dependencies": {
     "@actions/core": "^1.10.0",
     "@actions/github": "^5.1.1"
   },
   "devDependencies": {
+    "@octokit/rest": "^19.0.5",
+    "@types/node": "^18.11.0",
     "@vercel/ncc": "^0.36.0",
-    "ts-standard": "^12.0.2",
+    "prettier": "^2.8.1",
     "typescript": "^4.9.4"
   }
 }
