@@ -1,7 +1,8 @@
 {
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "plugin:jest/style"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": [
@@ -11,10 +12,13 @@
   "parserOptions": {
     "ecmaVersion": 9,
     "sourceType": "module",
-    "project": "./tsconfig.json"
+    "project": [
+      "tsconfig.eslint.json"
+    ]
   },
   "env": {
     "node": true,
-    "es6": true
+    "es6": true,
+    "jest/globals": true
   }
 }

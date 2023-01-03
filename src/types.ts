@@ -2,11 +2,6 @@ export interface ILabel {
   name: string;
 }
 
-export interface IPull {
-  requested_reviewers?: [] | null;
-  labels: ILabel[];
-}
-
 export interface IPullContext {
   owner: string;
   repo: string;
