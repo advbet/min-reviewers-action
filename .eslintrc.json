@@ -1,12 +1,25 @@
 {
   "extends": [
-    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:jest/style"
+    "plugin:jest/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": [
+    "jest",
     "@typescript-eslint"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "test/**"
+      ],
+      "plugins": [
+        "jest"
+      ],
+      "extends": [
+        "plugin:jest/recommended"
+      ]
+    }
   ],
   "root": true,
   "parserOptions": {
