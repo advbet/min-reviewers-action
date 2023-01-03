@@ -1,5 +1,13 @@
 import { expect, test } from "@jest/globals";
+import * as core from "@actions/core";
 import { getMinReviewers, requirementPassed } from "../src/min-reviewers";
+
+jest.spyOn(core, "info").mockImplementation(() => {
+  return;
+});
+jest.spyOn(core, "debug").mockImplementation(() => {
+  return;
+});
 
 describe("testing labels parsing", () => {
   test("valid 1 reviewer", () => {
