@@ -1,8 +1,8 @@
-import { Label, PullContext, Review } from "./types";
+import { ReviewersAll, Label, PullContext, Review } from "./types";
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
-export function getMinReviewers(labels: Label[]): string | number {
+export function getMinReviewers(labels: Label[]): ReviewersAll | number {
   const pattern = /min-(?<number>\d|all)-reviewers/;
 
   for (const label of labels) {
@@ -22,7 +22,7 @@ export function getMinReviewers(labels: Label[]): string | number {
 export function requirementPassed(
   reviews: Review[],
   requestedReviewers: number,
-  minReviewers: number | string
+  minReviewers: number | ReviewersAll
 ): boolean {
   const latestReviews = reviews
     .reverse()

@@ -1,3 +1,5 @@
+export type ReviewersAll = "all";
+
 export interface Label {
   name: string;
 }
