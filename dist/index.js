@@ -126,12 +126,12 @@ function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const token = core.getInput("GITHUB_TOKEN", { required: true });
-        if (token === "") {
+        if (!token) {
             throw new Error("No GITHUB_TOKEN found in input");
         }
         const octokit = github.getOctokit(token);
         const context = github.context;
-        if (context.payload.pull_request == null) {
+        if (!context.payload.pull_request) {
             throw new Error("No pull request found in payload");
         }
         const pullContext = Object.assign(Object.assign({}, context.repo), { pull_number: context.payload.pull_request.number });

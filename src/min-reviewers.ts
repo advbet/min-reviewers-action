@@ -57,14 +57,14 @@ export function requirementPassed(
 export async function run(): Promise<void> {
   const token: string = core.getInput("GITHUB_TOKEN", { required: true });
 
-  if (token === "") {
+  if (!token) {
     throw new Error("No GITHUB_TOKEN found in input");
   }
 
   const octokit = github.getOctokit(token);
   const context = github.context;
 
-  if (context.payload.pull_request == null) {
+  if (!context.payload.pull_request) {
     throw new Error("No pull request found in payload");
   }
 
