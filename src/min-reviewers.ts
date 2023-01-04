@@ -1,8 +1,8 @@
-import { ILabel, IPullContext, IReview } from "./types";
+import { Label, PullContext, Review } from "./types";
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
-export function getMinReviewers(labels: ILabel[]): string | number {
+export function getMinReviewers(labels: Label[]): string | number {
   const pattern = /min-(?<number>\d|all)-reviewers/;
 
   for (const label of labels) {
@@ -20,7 +20,7 @@ export function getMinReviewers(labels: ILabel[]): string | number {
 }
 
 export function requirementPassed(
-  reviews: IReview[],
+  reviews: Review[],
   requestedReviewers: number,
   minReviewers: number | string
 ): boolean {
@@ -68,7 +68,7 @@ export async function run(): Promise<void> {
     throw new Error("No pull request found in payload");
   }
 
-  const pullContext: IPullContext = {
+  const pullContext: PullContext = {
     ...context.repo,
     pull_number: context.payload.pull_request.number,
   };
