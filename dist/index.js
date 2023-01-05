@@ -85,7 +85,7 @@ exports.run = exports.requirementPassed = exports.getMinApprovals = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 function getMinApprovals(labels) {
-    const pattern = /min-(?<number>\d+|all)-approvals/;
+    const pattern = /min-(\d+|all)-approvals/;
     for (const label of labels) {
         const m = label.name.match(pattern);
         if (m) {
