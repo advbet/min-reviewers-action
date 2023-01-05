@@ -1,19 +1,15 @@
-import { ReviewersAll, Label, PullContext, Review } from "./types";
+import { ApprovalsAll, Label, PullContext, Review } from "./types";
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 
-export function getMinReviewers(labels: Label[]): ReviewersAll | number {
-  const pattern = /min-(?<number>\d|all)-reviewers/;
+export function getMinApprovals(labels: Label[]): ApprovalsAll | number {
+  const pattern = /min-(?<number>\d|all)-approvals/;
 
   for (const label of labels) {
     const m = label.name.match(pattern);
-    if (!m) {
-      continue;
+    if (m) {
+      return m[1] === "all" ? m[1] : parseInt(m[1], 10);
     }
-
-    const { groups = {} } = m;
-    const { number = "0" } = groups;
-    return number === "all" ? number : parseInt(number, 10);
   }
 
   return 0;
@@ -22,7 +18,7 @@ export function getMinReviewers(labels: Label[]): ReviewersAll | number {
 export function requirementPassed(
   reviews: Review[],
   requestedReviewers: number,
-  minReviewers: number | ReviewersAll
+  minReviewers: number | ApprovalsAll
 ): boolean {
   const latestReviews = reviews
     .reverse()
@@ -75,10 +71,10 @@ export async function run(): Promise<void> {
 
   const { data: pull } = await octokit.rest.pulls.get({ ...pullContext });
 
-  const minReviewers = getMinReviewers(pull.labels);
-  core.info(`Min reviewers: ${minReviewers}`);
+  const minApprovals = getMinApprovals(pull.labels);
+  core.info(`Min approvals: ${minApprovals}`);
 
-  if (minReviewers === 0) {
+  if (minApprovals === 0) {
     core.info("Label matching pattern not found");
     return;
   }
@@ -93,7 +89,7 @@ export async function run(): Promise<void> {
   }
 
   const requestedReviewers = pull.requested_reviewers ?? [];
-  if (!requirementPassed(reviews, requestedReviewers.length, minReviewers)) {
+  if (!requirementPassed(reviews, requestedReviewers.length, minApprovals)) {
     core.setFailed("Minimal requirement not met");
   }
 

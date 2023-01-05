@@ -1,4 +1,4 @@
-export type ReviewersAll = "all";
+export type ApprovalsAll = "all";
 
 export interface Label {
   name: string;

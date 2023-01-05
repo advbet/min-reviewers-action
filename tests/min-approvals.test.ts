@@ -1,6 +1,6 @@
 import { expect, test } from "@jest/globals";
 import * as core from "@actions/core";
-import { getMinReviewers, requirementPassed } from "../src/min-reviewers";
+import { getMinApprovals, requirementPassed } from "../src/min-approvals";
 
 jest.spyOn(core, "info").mockImplementation(() => {
   return;
@@ -10,34 +10,34 @@ jest.spyOn(core, "debug").mockImplementation(() => {
 });
 
 describe("testing labels parsing", () => {
-  test("valid 1 reviewer", () => {
-    const labels = [{ name: "min-1-reviewers" }];
-    expect(getMinReviewers(labels)).toBe(1);
+  test("valid 1 approval", () => {
+    const labels = [{ name: "min-1-approvals" }];
+    expect(getMinApprovals(labels)).toBe(1);
   });
 
-  test("invalid 1 reviewer", () => {
-    const labels = [{ name: "min-1-reviewer" }];
-    expect(getMinReviewers(labels)).toBe(0);
+  test("invalid 1 approval", () => {
+    const labels = [{ name: "min-1-approval" }];
+    expect(getMinApprovals(labels)).toBe(0);
   });
 
   test("multiple valid labels only first is taken", () => {
-    const labels = [{ name: "min-1-reviewers" }, { name: "min-2-reviewers" }];
-    expect(getMinReviewers(labels)).toBe(1);
+    const labels = [{ name: "min-1-approvals" }, { name: "min-2-approvals" }];
+    expect(getMinApprovals(labels)).toBe(1);
   });
 
   test("valid all label", () => {
-    const labels = [{ name: "min-all-reviewers" }];
-    expect(getMinReviewers(labels)).toBe("all");
+    const labels = [{ name: "min-all-approvals" }];
+    expect(getMinApprovals(labels)).toBe("all");
   });
 
   test("labels over 9 not supported", () => {
-    const labels = [{ name: "min-10-reviewers" }];
-    expect(getMinReviewers(labels)).toBe(0);
+    const labels = [{ name: "min-10-approvals" }];
+    expect(getMinApprovals(labels)).toBe(0);
   });
 });
 
 describe("testing requirement passing", () => {
-  test("not passed: 1 review, but 2 required", () => {
+  test("not passed: 1 approval, but 2 required", () => {
     const reviews = [
       {
         user: { id: 1 },
@@ -47,7 +47,7 @@ describe("testing requirement passing", () => {
     expect(requirementPassed(reviews, 2, 2)).toBe(false);
   });
 
-  test("passed: 2 reviews, 2 required", () => {
+  test("passed: 2 approvals, 2 required", () => {
     const reviews = [
       {
         user: { id: 1 },
@@ -61,7 +61,7 @@ describe("testing requirement passing", () => {
     expect(requirementPassed(reviews, 2, 2)).toBe(true);
   });
 
-  test("not passed: 2 reviews from same user, 2 required", () => {
+  test("not passed: 2 approvals from same user, 2 required", () => {
     const reviews = [
       {
         user: { id: 1 },
@@ -75,7 +75,7 @@ describe("testing requirement passing", () => {
     expect(requirementPassed(reviews, 2, 2)).toBe(false);
   });
 
-  test("not passed: 2 reviews, 2 still assigned, all required", () => {
+  test("not passed: 2 approvals, 2 still assigned, all required", () => {
     const reviews = [
       {
         user: { id: 1 },
@@ -89,7 +89,7 @@ describe("testing requirement passing", () => {
     expect(requirementPassed(reviews, 2, "all")).toBe(false);
   });
 
-  test("not passed: 1 approved, 1 dismissed, 2 required", () => {
+  test("not passed: 1 approval, 1 dismissed, 2 required", () => {
     const reviews = [
       {
         user: { id: 1 },

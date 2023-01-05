@@ -1,12 +1,12 @@
-# Min reviewers GitHub Action
+# Min approvals GitHub Action
 
-Sets minimum number of reviewers through PR labels. Label pattern `min-{number}-reviewers`. For all reviewers to
-approve use `min-all-reviewers`.
+Sets minimum number of approvals through PR labels. Label pattern `min-{number}-approvals`. For all reviewers to
+approve use `min-all-approvals`.
 
 ## Usage
 
 ```yml
-name: Min reviewers
+name: Min approvals
 
 on:
   pull_request:
@@ -17,5 +17,5 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: advbet/min-reviewers-action@v1
+      - uses: advbet/min-approvals-action@v1
 ```

@@ -1,5 +1,5 @@
-name: 'Min reviewers'
-description: 'Sets minimum number of reviewers through PR labels'
+name: 'Min approvals'
+description: 'Sets minimum number of approvals through PR labels'
 
 inputs:
   GITHUB_TOKEN:

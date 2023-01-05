@@ -1,5 +1,5 @@
 import * as core from "@actions/core";
-import { run } from "./min-reviewers";
+import { run } from "./min-approvals";
 
 run()
   .then(() => {
