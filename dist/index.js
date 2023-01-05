@@ -85,7 +85,7 @@ exports.run = exports.requirementPassed = exports.getMinApprovals = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 function getMinApprovals(labels) {
-    const pattern = /min-(?<number>\d|all)-approvals/;
+    const pattern = /min-(?<number>\d+|all)-approvals/;
     for (const label of labels) {
         const m = label.name.match(pattern);
         if (m) {
@@ -131,15 +131,14 @@ function run() {
         if (!context.payload.pull_request) {
             throw new Error("No pull request found in payload");
         }
-        const pullContext = Object.assign(Object.assign({}, context.repo), { pull_number: context.payload.pull_request.number });
-        const { data: pull } = yield octokit.rest.pulls.get(Object.assign({}, pullContext));
+        const { data: pull } = yield octokit.rest.pulls.get(Object.assign(Object.assign({}, context.repo), { pull_number: context.payload.pull_request.number }));
         const minApprovals = getMinApprovals(pull.labels);
         core.info(`Min approvals: ${minApprovals}`);
         if (minApprovals === 0) {
             core.info("Label matching pattern not found");
             return;
         }
-        const { data: reviews } = yield octokit.rest.pulls.listReviews(Object.assign(Object.assign({}, pullContext), { per_page: 100 }));
+        const { data: reviews } = yield octokit.rest.pulls.listReviews(Object.assign(Object.assign({}, context.repo), { pull_number: context.payload.pull_request.number, per_page: 100 }));
         if (reviews.length === 0) {
             core.setFailed("No reviews found");
         }

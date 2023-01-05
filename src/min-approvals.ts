@@ -1,8 +1,13 @@
-import { ApprovalsAll, Label, PullContext, Review } from "./types";
 import * as core from "@actions/core";
 import * as github from "@actions/github";
+import { components } from "@octokit/openapi-types";
 
-export function getMinApprovals(labels: Label[]): ApprovalsAll | number {
+type ApprovalsAll = "all";
+export type Labels = components["schemas"]["pull-request"]["labels"];
+export type Review = components["schemas"]["pull-request-review"];
+export type Reviews = Review[];
+
+export function getMinApprovals(labels: Labels): ApprovalsAll | number {
   const pattern = /min-(?<number>\d+|all)-approvals/;
 
   for (const label of labels) {
@@ -64,12 +69,10 @@ export async function run(): Promise<void> {
     throw new Error("No pull request found in payload");
   }
 
-  const pullContext: PullContext = {
+  const { data: pull } = await octokit.rest.pulls.get({
     ...context.repo,
     pull_number: context.payload.pull_request.number,
-  };
-
-  const { data: pull } = await octokit.rest.pulls.get({ ...pullContext });
+  });
 
   const minApprovals = getMinApprovals(pull.labels);
   core.info(`Min approvals: ${minApprovals}`);
@@ -80,7 +83,8 @@ export async function run(): Promise<void> {
   }
 
   const { data: reviews } = await octokit.rest.pulls.listReviews({
-    ...pullContext,
+    ...context.repo,
+    pull_number: context.payload.pull_request.number,
     per_page: 100,
   });
 
