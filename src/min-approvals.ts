@@ -3,7 +3,7 @@ import * as core from "@actions/core";
 import * as github from "@actions/github";
 
 export function getMinApprovals(labels: Label[]): ApprovalsAll | number {
-  const pattern = /min-(?<number>\d|all)-approvals/;
+  const pattern = /min-(?<number>\d+|all)-approvals/;
 
   for (const label of labels) {
     const m = label.name.match(pattern);

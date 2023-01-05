@@ -30,9 +30,9 @@ describe("testing labels parsing", () => {
     expect(getMinApprovals(labels)).toBe("all");
   });
 
-  test("labels over 9 not supported", () => {
-    const labels = [{ name: "min-10-approvals" }];
-    expect(getMinApprovals(labels)).toBe(0);
+  test("labels over 9 supported", () => {
+    const labels = [{ name: "min-999-approvals" }];
+    expect(getMinApprovals(labels)).toBe(999);
   });
 });
 
