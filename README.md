@@ -11,6 +11,8 @@ name: Min approvals
 on:
   pull_request:
     types: [labeled, unlabeled]
+  pull_request_review:
+    types: [submitted, dismissed]    
 
 jobs:
   approved-by:
