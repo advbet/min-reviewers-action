@@ -31,8 +31,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
-const min_reviewers_1 = __nccwpck_require__(2796);
-(0, min_reviewers_1.run)()
+const min_approvals_1 = __nccwpck_require__(3647);
+(0, min_approvals_1.run)()
     .then(() => {
     core.info("Done.");
 })
@@ -43,7 +43,7 @@ const min_reviewers_1 = __nccwpck_require__(2796);
 
 /***/ }),
 
-/***/ 2796:
+/***/ 3647:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -81,23 +81,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.run = exports.requirementPassed = exports.getMinReviewers = void 0;
+exports.run = exports.requirementPassed = exports.getMinApprovals = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
-function getMinReviewers(labels) {
-    const pattern = /min-(?<number>\d|all)-reviewers/;
+function getMinApprovals(labels) {
+    const pattern = /min-(?<number>\d|all)-approvals/;
     for (const label of labels) {
         const m = label.name.match(pattern);
-        if (!m) {
-            continue;
+        if (m) {
+            return m[1] === "all" ? m[1] : parseInt(m[1], 10);
         }
-        const { groups = {} } = m;
-        const { number = "0" } = groups;
-        return number === "all" ? number : parseInt(number, 10);
     }
     return 0;
 }
-exports.getMinReviewers = getMinReviewers;
+exports.getMinApprovals = getMinApprovals;
 function requirementPassed(reviews, requestedReviewers, minReviewers) {
     const latestReviews = reviews
         .reverse()
@@ -136,9 +133,9 @@ function run() {
         }
         const pullContext = Object.assign(Object.assign({}, context.repo), { pull_number: context.payload.pull_request.number });
         const { data: pull } = yield octokit.rest.pulls.get(Object.assign({}, pullContext));
-        const minReviewers = getMinReviewers(pull.labels);
-        core.info(`Min reviewers: ${minReviewers}`);
-        if (minReviewers === 0) {
+        const minApprovals = getMinApprovals(pull.labels);
+        core.info(`Min approvals: ${minApprovals}`);
+        if (minApprovals === 0) {
             core.info("Label matching pattern not found");
             return;
         }
@@ -147,7 +144,7 @@ function run() {
             core.setFailed("No reviews found");
         }
         const requestedReviewers = (_a = pull.requested_reviewers) !== null && _a !== void 0 ? _a : [];
-        if (!requirementPassed(reviews, requestedReviewers.length, minReviewers)) {
+        if (!requirementPassed(reviews, requestedReviewers.length, minApprovals)) {
             core.setFailed("Minimal requirement not met");
         }
         core.info("Done.");
