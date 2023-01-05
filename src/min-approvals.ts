@@ -8,7 +8,7 @@ export type Review = components["schemas"]["pull-request-review"];
 export type Reviews = Review[];
 
 export function getMinApprovals(labels: Labels): ApprovalsAll | number {
-  const pattern = /min-(?<number>\d+|all)-approvals/;
+  const pattern = /min-(\d+|all)-approvals/;
 
   for (const label of labels) {
     const m = label.name.match(pattern);

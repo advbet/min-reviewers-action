@@ -2,6 +2,10 @@ import { expect, test } from "@jest/globals";
 import * as core from "@actions/core";
 import { getMinApprovals, Labels, requirementPassed, Reviews } from "../src/min-approvals";
 
+type RecursivePartial<T> = {
+  [P in keyof T]?: RecursivePartial<T[P]>;
+}
+
 jest.spyOn(core, "info").mockImplementation(() => {
   return;
 });
@@ -11,34 +15,34 @@ jest.spyOn(core, "debug").mockImplementation(() => {
 
 describe("testing labels parsing", () => {
   test("valid 1 approval", () => {
-    const labels = [{ name: "min-1-approvals" }];
+    const labels: RecursivePartial<Labels> = [{ name: "min-1-approvals" }];
     expect(getMinApprovals(labels as Labels)).toBe(1);
   });
 
   test("invalid 1 approval", () => {
-    const labels = [{ name: "min-1-approval" }];
+    const labels: RecursivePartial<Labels> = [{ name: "min-1-approval" }];
     expect(getMinApprovals(labels as Labels)).toBe(0);
   });
 
   test("multiple valid labels only first is taken", () => {
-    const labels = [{ name: "min-1-approvals" }, { name: "min-2-approvals" }];
+    const labels: RecursivePartial<Labels> = [{ name: "min-1-approvals" }, { name: "min-2-approvals" }];
     expect(getMinApprovals(labels as Labels)).toBe(1);
   });
 
   test("valid all label", () => {
-    const labels = [{ name: "min-all-approvals" }];
+    const labels: RecursivePartial<Labels> = [{ name: "min-all-approvals" }];
     expect(getMinApprovals(labels as Labels)).toBe("all");
   });
 
   test("labels over 9 supported", () => {
-    const labels = [{ name: "min-999-approvals" }];
+    const labels: RecursivePartial<Labels> = [{ name: "min-999-approvals" }];
     expect(getMinApprovals(labels as Labels)).toBe(999);
   });
 });
 
 describe("testing requirement passing", () => {
   test("not passed: 1 approval, but 2 required", () => {
-    const reviews = [
+    const reviews: RecursivePartial<Reviews> = [
       {
         user: { id: 1 },
         state: "APPROVED"
@@ -48,7 +52,7 @@ describe("testing requirement passing", () => {
   });
 
   test("passed: 2 approvals, 2 required", () => {
-    const reviews = [
+    const reviews: RecursivePartial<Reviews> = [
       {
         user: { id: 1 },
         state: "APPROVED"
@@ -62,7 +66,7 @@ describe("testing requirement passing", () => {
   });
 
   test("not passed: 2 approvals from same user, 2 required", () => {
-    const reviews = [
+    const reviews: RecursivePartial<Reviews> = [
       {
         user: { id: 1 },
         state: "APPROVED"
@@ -76,7 +80,7 @@ describe("testing requirement passing", () => {
   });
 
   test("not passed: 2 approvals, 2 still assigned, all required", () => {
-    const reviews = [
+    const reviews: RecursivePartial<Reviews> = [
       {
         user: { id: 1 },
         state: "APPROVED"
@@ -90,7 +94,7 @@ describe("testing requirement passing", () => {
   });
 
   test("not passed: 1 approval, 1 dismissed, 2 required", () => {
-    const reviews = [
+    const reviews: RecursivePartial<Reviews> = [
       {
         user: { id: 1 },
         state: "APPROVED"
