@@ -46,10 +46,7 @@ export function requirementPassed(
       return false;
     }
 
-    // some reviewers do not approve
-    if (!latestReviews.every((review) => review.state.toLowerCase() === "approved")) {
-      return false;
-    }
+    return latestReviews.every((review) => review.state.toLowerCase() === "approved");
   }
 
   return approvedReviews.length >= minReviewers;
